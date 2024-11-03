@@ -55,6 +55,7 @@ const CountryTable = ({ countries, loading }) => {
       dataIndex: 'population',
       render: (pop) => <span>{pop.toLocaleString()}</span>,
       sorter: (a, b) => a.population - b.population,
+      responsive: ['xxl',"xl","lg","md","sm"]
     },
   ];
 

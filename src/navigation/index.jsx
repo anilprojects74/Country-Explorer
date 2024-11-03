@@ -10,8 +10,8 @@ export default function Index(){
   return(
     <Sidebar>
       <SidebarItem icon={<LayoutDashboard size={20} />} text={"Dashboard"} link={"/"} active={location.pathname === "/"}/>
-      <SidebarItem icon={<MapPinPlus size={20} />} text={"Country"} link={"/country"} active={location.pathname === "/country"}/>
       <SidebarItem icon={<Earth size={20}/>} text={"Globe"} link={"/globe"} active={location.pathname === "/globe"}/>
+      <SidebarItem icon={<MapPinPlus size={20} />} text={"Country"} link={"/country"} active={location?.pathname?.startsWith("/country")}/>
     </Sidebar>
   )
 }

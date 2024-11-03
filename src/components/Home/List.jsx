@@ -2,7 +2,7 @@ import CountryCard from "./CountryCard";
 import { Row, Col, Skeleton, Button, Spin } from "antd";
 import SkeletonCard from "./SkeletonCard";
 
-export default function List({ data, loading, loadMoreData, loadMoreLoading }) {
+export default function List({ data, loading, loadMoreData, loadMoreLoading, originalData }) {
 
   const SkeletonCount = 14
 
@@ -36,7 +36,7 @@ export default function List({ data, loading, loadMoreData, loadMoreLoading }) {
         </div>
       )}
       {
-        !loading && 
+        !loading && originalData?.length > data?.length &&
         <div className="flex justify-center my-4">
           <Button 
             onClick={loadMoreData} 

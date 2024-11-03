@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect, useCallback } from "react"
-import { Row, Col, Select, Input, Card, Button, Skeleton } from "antd"
+import { Row, Col, Select, Input, Card, Button, Skeleton, notification } from "antd"
 import axios from "axios"
 
 import { options, urls} from "./data"
@@ -42,11 +42,26 @@ export default function Home(){
       setLoading(true)
       const response = await axios.get(API_END_POINT + Query_STRING)
       setData(response?.data)
-      setDataSize(response?.data?.length)
-      setDisplayedData(response.data.slice(0, PAGE_SIZE))
-      setCurrentIndex(PAGE_SIZE)
+      if (Array.isArray(response?.data)) {
+        setDataSize(response?.data?.length)
+        if(response?.data?.length < PAGE_SIZE){
+          setDisplayedData(response.data.slice(0, response?.data))
+        } else {
+          setDisplayedData(response.data.slice(0, PAGE_SIZE))
+        }
+        setCurrentIndex(PAGE_SIZE)
+      } else if(typeof response?.data === "object" && response?.data !== null){
+        setDataSize(1)
+        setDisplayedData([response?.data])
+        setCurrentIndex(PAGE_SIZE)
+      }
     } catch(err){
       console.log(err)
+      notification.error({
+        message: 'Failed to load data',
+        description: `Could not fetch data from filters. Please check the country name and try again.`,
+        placement: 'topRight',
+      });
     } finally {
       setLoading(false)
     } 
@@ -82,12 +97,11 @@ export default function Home(){
   
       setData(sorted);
       setLoading(false);
-    }, 500);
+    }, 1200);
   };
-  
 
   return(
-    <div className="h-screen overflow-hidden">
+    <div className="h-screen overflow-hidden p-4">
         <Card>
           <Row gutter={[14, 14]} align="middle">
             <Col xs={24} sm={12} md={12} lg={10} xl={10}>
@@ -122,26 +136,24 @@ export default function Home(){
           </p>
         </div>
         <Row gutter={[10,10]} className="flex justify-end">
-          <Col xs={16} sm={20} md={10} lg={8} xl={7} xxl={6}>
-            <select 
+          <Col xs={16} sm={20} md={10} lg={8} xl={7} xxl={6} style={{minHeight:"20px"}}>
+            <Select 
               value={sort}
-              onChange={(e) => {
-                const value = e.target.value;
+              onChange={(value) => {
                 setSort(value);
-                sortData(value);
+                sortData(value)
               }}
-              style={{minHeight:"15px"}}
               className="form-select form-control w-full h-full border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring focus:ring-violet-500"
             >
-              <option value="name">Sort by Name</option>
-              <option value="population">Sort by Population</option>
-            </select>
+              <Option value="name">Sort by Name</Option>
+              <Option value="population">Sort by Population</Option>
+            </Select>
           </Col>
           <Col xs={24} sm={24} md={14} lg={11} xl={7} xxl={5} className="flex justify-end">
             <SliderToggle selected={selectedView} setSelected={setSelectedView}/>
           </Col>
         </Row>
-        <Row>
+        <Row className="h-fit">
           <Col span={24}>
             <AnimatePresence mode="wait">
               {selectedView === 'list' ? (
@@ -151,10 +163,12 @@ export default function Home(){
                   animate={{ opacity: 1, x: 0, rotate: 0 }} 
                   exit={{ opacity: 0, x: -20, rotate: -20 }}
                   transition={{ duration: 0.4 }}
+                  className="h-full"
                 >
                   <List
                     loading={loading}
                     data={displayedData}
+                    originalData={data}
                     loadMoreData={loadMoreData}
                     loadMoreLoading={loadMoreLoading}
                   />

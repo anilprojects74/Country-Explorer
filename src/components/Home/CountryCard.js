@@ -1,8 +1,10 @@
 import React from 'react';
+import { useNavigate } from "react-router-dom";
 
 function CountryCard({ image_url, title, population, region, capital }) {
+  const navigate = useNavigate()
   return (
-    <div className="container rounded-lg shadow-lg bg-white dark:bg-gray-700 dark:text-white h-full hover:scale-105 cursor-pointer">
+    <div onClick={()=>navigate(`/country/${title}`)} className="container rounded-lg shadow-lg bg-white dark:bg-gray-700 dark:text-white h-full hover:scale-105 cursor-pointer">
       <img
         src={image_url}
         className="h-40 w-full rounded-tl-lg rounded-tr-lg object-cover" 
