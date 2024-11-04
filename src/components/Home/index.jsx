@@ -41,7 +41,6 @@ export default function Home(){
     try{
       setLoading(true)
       const response = await axios.get(API_END_POINT + Query_STRING)
-      setData(response?.data)
       if (Array.isArray(response?.data)) {
         setDataSize(response?.data?.length)
         if(response?.data?.length < PAGE_SIZE){
@@ -49,9 +48,11 @@ export default function Home(){
         } else {
           setDisplayedData(response.data.slice(0, PAGE_SIZE))
         }
+        setData(response?.data)
         setCurrentIndex(PAGE_SIZE)
       } else if(typeof response?.data === "object" && response?.data !== null){
         setDataSize(1)
+        setData([response?.data])
         setDisplayedData([response?.data])
         setCurrentIndex(PAGE_SIZE)
       }
